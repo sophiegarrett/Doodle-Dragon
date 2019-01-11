@@ -1,5 +1,6 @@
 # main module
 import pygame
+from pathlib import Path
 import character
 
 # main class
@@ -14,7 +15,8 @@ class App:
 		pygame.init()
 		
 		# load and set the logo & caption
-		self.logo = pygame.image.load("logo32x32.png")
+		self.logopath = Path("assets/logo32x32.png")
+		self.logo = pygame.image.load(self.logopath.resolve().as_posix())
 		pygame.display.set_icon(self.logo)
 		pygame.display.set_caption("ISP Game")
 		
@@ -25,7 +27,8 @@ class App:
 		self.screen.fill((255,255,255))
 	
 		# create the player character
-		self.playerChar = character.Character(50, 50, "character.gif")
+		self.playerpath = Path("assets/character/character.gif")
+		self.playerChar = character.Character(50, 50, self.playerpath)
 	
 		# define how many pixels we move our character each frame
 		self.step_x = 1
