@@ -21,14 +21,31 @@ class Character:
 		return self.ypos
 	
 	def draw(self, screen):
-		screen.fill((255,255,255))
 		screen.blit(self.image, (self.xpos, self.ypos))
-		pygame.display.flip()
+	
+	def move(self, distance):
+		self.xpos += distance
 
 # player character class
 class Player(Character):
 	def __init__(self):
 		self.imagepath = Path("assets/character/character.gif")
 		Character.__init__(self, 50, 50, self.imagepath)
+		self.isRunning = False
 	
+	def run(self, direction):
+		self.isRunning = True
+		self.runDirection = direction
+	
+	def stop(self):
+		self.isRunning = False
+		
+	def getRun(self):
+		return self.isRunning
+	
+	def getDirection(self):
+		return self.runDirection
+		
+	def jump(self):
+		pass
 	

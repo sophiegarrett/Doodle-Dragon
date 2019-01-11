@@ -36,27 +36,30 @@ class App:
 	def on_event(self, event):
 		if event.type == pygame.QUIT:
 			self.running = False
+		elif event.type == pygame.KEYDOWN:
+			if (event.key == pygame.K_RIGHT):
+				self.playerChar.run("right")
+			elif (event.key == pygame.K_LEFT):
+				self.playerChar.run("left")
+		elif event.type == pygame.KEYUP:
+			self.playerChar.stop()
 	
 	def on_loop(self):
-		# fetch character position
-		self.xpos = self.playerChar.getX()
-		self.ypos = self.playerChar.getY()
-		
-		# move the character
-		# check if the character is still on screen, if not change direction
-		if self.xpos > self.width-32 or self.xpos < 0:
-			self.step_x = -self.step_x
-		if self.ypos > self.height-32 or self.ypos < 0:
-			self.step_y = -self.step_y
-		
-		# update the position of the character
-		self.xpos += self.step_x
-		self.ypos += self.step_y
-		self.playerChar.update(self.xpos, self.ypos)
+		if (self.playerChar.getRun() == True):
+			if (self.playerChar.getDirection() == "right"):
+				if (self.playerChar.getX() < self.width-32):
+					self.playerChar.move(1)
+			elif (self.playerChar.getDirection() == "left"):
+				if (self.playerChar.getX() > 0):
+					self.playerChar.move(-1)
 	
 	def on_render(self):
+		# clear the screen
+		self.screen.fill((255,255,255))
 		# draw the player character
 		self.playerChar.draw(self.screen)
+		# update the display
+		pygame.display.flip()
 	
 	def on_cleanup(self):
 		pygame.quit()
