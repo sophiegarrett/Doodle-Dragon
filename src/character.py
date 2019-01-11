@@ -2,8 +2,8 @@
 import pygame
 from pathlib import Path
 
+# general character class
 class Character:
-	
 	# Initializer
 	def __init__(self, xpos, ypos, imagepath):
 		self.xpos = xpos
@@ -24,4 +24,11 @@ class Character:
 		screen.fill((255,255,255))
 		screen.blit(self.image, (self.xpos, self.ypos))
 		pygame.display.flip()
-		
+
+# player character class
+class Player(Character):
+	def __init__(self):
+		self.imagepath = Path("assets/character/character.gif")
+		Character.__init__(self, 50, 50, self.imagepath)
+	
+	

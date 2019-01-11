@@ -27,8 +27,7 @@ class App:
 		self.screen.fill((255,255,255))
 	
 		# create the player character
-		self.playerpath = Path("assets/character/character.gif")
-		self.playerChar = character.Character(50, 50, self.playerpath)
+		self.playerChar = character.Player()
 	
 		# define how many pixels we move our character each frame
 		self.step_x = 1
