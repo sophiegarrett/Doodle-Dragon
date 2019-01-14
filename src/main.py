@@ -37,10 +37,12 @@ class App:
 		if event.type == pygame.QUIT:
 			self.running = False
 		elif event.type == pygame.KEYDOWN:
-			if (event.key == pygame.K_RIGHT):
+			if (event.key == pygame.K_RIGHT or event.key == pygame.K_d):
 				self.playerChar.run("right")
-			elif (event.key == pygame.K_LEFT):
+			elif (event.key == pygame.K_LEFT or event.key == pygame.K_a):
 				self.playerChar.run("left")
+			elif (event.key == pygame.K_UP or event.key == pygame.K_w):
+				self.playerChar.jump()
 		elif event.type == pygame.KEYUP:
 			self.playerChar.stop()
 	
