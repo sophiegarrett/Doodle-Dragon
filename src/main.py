@@ -20,7 +20,7 @@ class App:
 		self.logopath = Path("assets/logo32x32.png")
 		self.logo = pygame.image.load(self.logopath.resolve().as_posix())
 		pygame.display.set_icon(self.logo)
-		pygame.display.set_caption("ISP Game")
+		pygame.display.set_caption("ISP Game - Doodle Dragon")
 		
 		# create a surface on the screen
 		self.screen = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF)
@@ -28,22 +28,21 @@ class App:
 		# initialize level 1
 		self.currentLevel = level.Level(1)
 		self.currentLevel.display(self.screen)
-	
+		
+		# initialize characters
+		self.characters = pygame.sprite.Group()
 		# create the player character
 		self.playerChar = character.Player(self.floor)
-	
-		# define how many pixels we move our character each frame
-		self.step_x = 1
-		self.step_y = 1
+		self.characters.add(self.playerChar)
 	
 	def on_event(self, event):
 		if event.type == pygame.QUIT:
 			self.running = False
 		elif event.type == pygame.KEYDOWN:
 			if (event.key == pygame.K_RIGHT or event.key == pygame.K_d):
-				self.playerChar.run("right")
+				self.playerChar.run(1)
 			elif (event.key == pygame.K_LEFT or event.key == pygame.K_a):
-				self.playerChar.run("left")
+				self.playerChar.run(-1)
 			elif (event.key == pygame.K_UP or event.key == pygame.K_w or event.key == pygame.K_SPACE):
 				if (self.playerChar.checkJump() == -1):
 					self.playerChar.jump()
@@ -53,38 +52,15 @@ class App:
 				self.playerChar.stopX()
 	
 	def on_loop(self):
-		if (self.playerChar.getXMomentum() == 1):
-			if (self.playerChar.getX() < self.width-32):
-				self.playerChar.moveX(2)
-		elif (self.playerChar.getXMomentum() == -1):
-			if (self.playerChar.getX() > 0):
-				self.playerChar.moveX(-2)
-		
-		if (self.playerChar.getYMomentum() >= 1):
-			if (self.playerChar.getY() > 0):
-				self.playerChar.moveY(-1)
-		elif (self.playerChar.getYMomentum() <= -1):
-			if (self.playerChar.getY() < self.floor):
-				self.playerChar.moveY(1)
-		
-		if (self.playerChar.checkJump() >= 21):
-			self.playerChar.tickJump()
-		elif (self.playerChar.checkJump() >= 1):
-			self.playerChar.tickJump()
-			self.playerChar.setYMomentum(0)
-		elif (self.playerChar.checkJump() == 0):
-			self.playerChar.setYMomentum(-1)
-		
-		if (self.playerChar.checkJump() == 0 and self.playerChar.getY() == self.floor):
-			self.playerChar.stopJump()
+		# update all characters
+		self.characters.update(self.width, self.height, self.floor)
 	
 	def on_render(self):
-		# display the current level
-		self.currentLevel.display(self.screen)
-		# draw the player character
-		self.playerChar.draw(self.screen)
+		# draw all characters on the screen
+		self.characters.clear(self.screen, self.currentLevel.getBackground())
+		self.characters.draw(self.screen)
 		# update the display
-		pygame.display.flip()
+		pygame.display.update()
 	
 	def on_cleanup(self):
 		pygame.quit()

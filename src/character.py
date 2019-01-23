@@ -3,33 +3,36 @@ import pygame
 from pathlib import Path
 
 # general character class
-class Character:
+class Character(pygame.sprite.Sprite):
 	# Initializer
-	def __init__(self, xpos, ypos, imagepath):
-		self.xpos = xpos
-		self.ypos = ypos
+	def __init__(self, xpos, ypos, width, height, imagepath):
+		# Call the Sprite constructor
+		pygame.sprite.Sprite.__init__(self)
+		
+		# Create an image of the character
+		self.image = pygame.Surface([width, height])
 		self.image = pygame.image.load(imagepath.resolve().as_posix())
+		
+		# Fetch the rectangle object that has the dimensions of the image
+		# Update the position of this object by setting the values of rect.x and rect.y
+		self.rect = self.image.get_rect()
+		
+		self.rect.x = xpos
+		self.rect.y = ypos
 		self.x_momentum = 0
 		self.y_momentum = 0
 	
-	def update(self, xpos, ypos):
-		self.xpos = xpos
-		self.ypos = ypos
-	
 	def getX(self):
-		return self.xpos
+		return self.rect.x
 	
 	def getY(self):
-		return self.ypos
-	
-	def draw(self, screen):
-		screen.blit(self.image, (self.xpos, self.ypos))
+		return self.rect.y
 	
 	def moveX(self, distance):
-		self.xpos += distance
+		self.rect.x += distance
 	
 	def moveY(self, distance):
-		self.ypos += distance
+		self.rect.y += distance
 	
 	def getXMomentum(self):
 		return self.x_momentum
@@ -50,14 +53,11 @@ class Character:
 class Player(Character):
 	def __init__(self, floor):
 		self.imagepath = Path("assets/character/character.gif")
-		Character.__init__(self, 64, floor, self.imagepath)
+		Character.__init__(self, 64, floor, 32, 32, self.imagepath)
 		self.jumpTick = -1
 	
-	def run(self, direction):
-		if (direction == "right"):
-			self.x_momentum = 1
-		elif (direction == "left"):
-			self.x_momentum = -1
+	def run(self, momentum):
+		self.x_momentum = momentum
 		
 	def jump(self):
 		self.y_momentum = 3
@@ -71,4 +71,30 @@ class Player(Character):
 	
 	def stopJump(self):
 		self.jumpTick = -1
+	
+	def update(self, width, height, floor):
+		if (self.x_momentum == 1):
+			if (self.rect.x < width-32):
+				self.moveX(1)
+		elif (self.x_momentum == -1):
+			if (self.rect.x > 0):
+				self.moveX(-1)
+		
+		if (self.y_momentum >= 1):
+			if (self.rect.y > 0):
+				self.moveY(-1)
+		elif (self.y_momentum <= -1):
+			if (self.rect.y < floor):
+				self.moveY(1)
+		
+		if (self.jumpTick >= 11):
+			self.tickJump()
+		elif (self.jumpTick >= 1):
+			self.tickJump()
+			self.setYMomentum(0)
+		elif (self.jumpTick == 0):
+			self.setYMomentum(-1)
+		
+		if (self.jumpTick == 0 and self.rect.y == floor):
+			self.stopJump()
 	

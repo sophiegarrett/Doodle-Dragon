@@ -15,3 +15,6 @@ class Level:
 	
 	def refresh(self):
 		pass
+		
+	def getBackground(self):
+		return self.background
