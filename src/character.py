@@ -9,6 +9,8 @@ class Character:
 		self.xpos = xpos
 		self.ypos = ypos
 		self.image = pygame.image.load(imagepath.resolve().as_posix())
+		self.x_momentum = 0
+		self.y_momentum = 0
 	
 	def update(self, xpos, ypos):
 		self.xpos = xpos
@@ -23,29 +25,50 @@ class Character:
 	def draw(self, screen):
 		screen.blit(self.image, (self.xpos, self.ypos))
 	
-	def move(self, distance):
+	def moveX(self, distance):
 		self.xpos += distance
+	
+	def moveY(self, distance):
+		self.ypos += distance
+	
+	def getXMomentum(self):
+		return self.x_momentum
+	
+	def getYMomentum(self):
+		return self.y_momentum
+	
+	def stopX(self):
+		self.x_momentum = 0
+		
+	def stopY(self):
+		self.y_momentum = 0
+	
+	def setYMomentum(self, x):
+		self.y_momentum = x
 
 # player character class
 class Player(Character):
 	def __init__(self):
 		self.imagepath = Path("assets/character/character.gif")
-		Character.__init__(self, 50, 50, self.imagepath)
-		self.isRunning = False
+		Character.__init__(self, 50, 350, self.imagepath)
+		self.jumpTick = -1
 	
 	def run(self, direction):
-		self.isRunning = True
-		self.runDirection = direction
-	
-	def stop(self):
-		self.isRunning = False
-		
-	def getRun(self):
-		return self.isRunning
-	
-	def getDirection(self):
-		return self.runDirection
+		if (direction == "right"):
+			self.x_momentum = 1
+		elif (direction == "left"):
+			self.x_momentum = -1
 		
 	def jump(self):
-		pass
+		self.y_momentum = 3
+		self.jumpTick = 120
+	
+	def checkJump(self):
+		return self.jumpTick
+	
+	def tickJump(self):
+		self.jumpTick = self.jumpTick - 1
+	
+	def stopJump(self):
+		self.jumpTick = -1
 	

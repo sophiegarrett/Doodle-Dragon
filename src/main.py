@@ -41,19 +41,39 @@ class App:
 				self.playerChar.run("right")
 			elif (event.key == pygame.K_LEFT or event.key == pygame.K_a):
 				self.playerChar.run("left")
-			elif (event.key == pygame.K_UP or event.key == pygame.K_w):
-				self.playerChar.jump()
+			elif (event.key == pygame.K_UP or event.key == pygame.K_w or event.key == pygame.K_SPACE):
+				if (self.playerChar.checkJump() == -1):
+					self.playerChar.jump()
 		elif event.type == pygame.KEYUP:
-			self.playerChar.stop()
+			if (pygame.key.get_pressed()[pygame.K_RIGHT] == False and pygame.key.get_pressed()[pygame.K_LEFT] == False
+				and pygame.key.get_pressed()[pygame.K_a] == False and pygame.key.get_pressed()[pygame.K_d] == False):
+				self.playerChar.stopX()
 	
 	def on_loop(self):
-		if (self.playerChar.getRun() == True):
-			if (self.playerChar.getDirection() == "right"):
-				if (self.playerChar.getX() < self.width-32):
-					self.playerChar.move(1)
-			elif (self.playerChar.getDirection() == "left"):
-				if (self.playerChar.getX() > 0):
-					self.playerChar.move(-1)
+		if (self.playerChar.getXMomentum() == 1):
+			if (self.playerChar.getX() < self.width-32):
+				self.playerChar.moveX(1)
+		elif (self.playerChar.getXMomentum() == -1):
+			if (self.playerChar.getX() > 0):
+				self.playerChar.moveX(-1)
+		
+		if (self.playerChar.getYMomentum() >= 1):
+			if (self.playerChar.getY() > 0):
+				self.playerChar.moveY(-1)
+		elif (self.playerChar.getYMomentum() <= -1):
+			if (self.playerChar.getY() < 350):
+				self.playerChar.moveY(1)
+		
+		if (self.playerChar.checkJump() >= 21):
+			self.playerChar.tickJump()
+		elif (self.playerChar.checkJump() >= 1):
+			self.playerChar.tickJump()
+			self.playerChar.setYMomentum(0)
+		elif (self.playerChar.checkJump() == 0):
+			self.playerChar.setYMomentum(-1)
+		
+		if (self.playerChar.checkJump() == 0 and self.playerChar.getY() == 350):
+			self.playerChar.stopJump()
 	
 	def on_render(self):
 		# clear the screen
