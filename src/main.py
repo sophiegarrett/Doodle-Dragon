@@ -2,6 +2,7 @@
 import pygame
 from pathlib import Path
 import character
+import level
 
 # main class
 class App:
@@ -9,6 +10,7 @@ class App:
 		self.running = True
 		self.screen = None
 		self.size = self.width, self.height = 1024, 576
+		self.floor = 416
 	
 	def on_init(self):
 		# initialize pygame
@@ -23,11 +25,12 @@ class App:
 		# create a surface on the screen
 		self.screen = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF)
 		
-		# set background
-		self.screen.fill((255,255,255))
+		# initialize level 1
+		self.currentLevel = level.Level(1)
+		self.currentLevel.display(self.screen)
 	
 		# create the player character
-		self.playerChar = character.Player()
+		self.playerChar = character.Player(self.floor)
 	
 		# define how many pixels we move our character each frame
 		self.step_x = 1
@@ -52,16 +55,16 @@ class App:
 	def on_loop(self):
 		if (self.playerChar.getXMomentum() == 1):
 			if (self.playerChar.getX() < self.width-32):
-				self.playerChar.moveX(1)
+				self.playerChar.moveX(2)
 		elif (self.playerChar.getXMomentum() == -1):
 			if (self.playerChar.getX() > 0):
-				self.playerChar.moveX(-1)
+				self.playerChar.moveX(-2)
 		
 		if (self.playerChar.getYMomentum() >= 1):
 			if (self.playerChar.getY() > 0):
 				self.playerChar.moveY(-1)
 		elif (self.playerChar.getYMomentum() <= -1):
-			if (self.playerChar.getY() < 350):
+			if (self.playerChar.getY() < self.floor):
 				self.playerChar.moveY(1)
 		
 		if (self.playerChar.checkJump() >= 21):
@@ -72,12 +75,12 @@ class App:
 		elif (self.playerChar.checkJump() == 0):
 			self.playerChar.setYMomentum(-1)
 		
-		if (self.playerChar.checkJump() == 0 and self.playerChar.getY() == 350):
+		if (self.playerChar.checkJump() == 0 and self.playerChar.getY() == self.floor):
 			self.playerChar.stopJump()
 	
 	def on_render(self):
-		# clear the screen
-		self.screen.fill((255,255,255))
+		# display the current level
+		self.currentLevel.display(self.screen)
 		# draw the player character
 		self.playerChar.draw(self.screen)
 		# update the display

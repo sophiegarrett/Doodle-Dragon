@@ -48,9 +48,9 @@ class Character:
 
 # player character class
 class Player(Character):
-	def __init__(self):
+	def __init__(self, floor):
 		self.imagepath = Path("assets/character/character.gif")
-		Character.__init__(self, 50, 350, self.imagepath)
+		Character.__init__(self, 64, floor, self.imagepath)
 		self.jumpTick = -1
 	
 	def run(self, direction):
