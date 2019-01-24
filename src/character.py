@@ -5,15 +5,21 @@ from pathlib import Path
 # general character class
 class Character(pygame.sprite.Sprite):
 	# Initializer
-	def __init__(self, xpos, ypos, width, height, cat):
+	def __init__(self, xpos, ypos, width, height, cat, face):
 		# Call the Sprite constructor
 		pygame.sprite.Sprite.__init__(self)
 		
-		# Create an image of the character
+		# Load images
 		self.category = cat
-		self.imagepath = Path("assets/character/" + cat + "/right.png")
+		self.facing = face
+		self.rightpath = Path("assets/character/" + cat + "/right.png")
+		self.rightimg = pygame.image.load(self.rightpath.resolve().as_posix())
+		self.leftpath = Path("assets/character/" + cat + "/left.png")
+		self.leftimg = pygame.image.load(self.leftpath.resolve().as_posix())
+		
+		# Display the character
 		self.image = pygame.Surface([width, height])
-		self.image = pygame.image.load(self.imagepath.resolve().as_posix())
+		self.image = self.rightimg
 		
 		# Fetch the rectangle object that has the dimensions of the image
 		# Update the position of this object by setting the values of rect.x and rect.y
@@ -52,15 +58,17 @@ class Character(pygame.sprite.Sprite):
 		self.y_momentum = x
 	
 	def faceRight(self):
-		pass
+		self.facing = "right"
+		self.image = self.rightimg
 	
 	def faceLeft(self):
-		pass
+		self.facing = "left"
+		self.image = self.leftimg
 
 # player character class
 class Player(Character):
 	def __init__(self, floor):
-		Character.__init__(self, 64, floor, 100, 64, "player")
+		Character.__init__(self, 64, floor, 100, 64, "player", "right")
 		self.jumpTick = -1
 	
 	def run(self, momentum):
@@ -68,7 +76,7 @@ class Player(Character):
 		
 	def jump(self):
 		self.y_momentum = 3
-		self.jumpTick = 120
+		self.jumpTick = 200
 	
 	def checkJump(self):
 		return self.jumpTick
@@ -81,9 +89,11 @@ class Player(Character):
 	
 	def update(self, width, height, floor):
 		if (self.x_momentum == 1):
+			self.faceRight()
 			if (self.rect.x < width-self.rect.width):
 				self.moveX(1)
 		elif (self.x_momentum == -1):
+			self.faceLeft()
 			if (self.rect.x > 0):
 				self.moveX(-1)
 		
