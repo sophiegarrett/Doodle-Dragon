@@ -87,6 +87,9 @@ class Player(Character):
 	def stopJump(self):
 		self.jumpTick = -1
 	
+	def animate(self):
+		pass
+	
 	def update(self, width, height, floor):
 		if (self.x_momentum == 1):
 			self.faceRight()
