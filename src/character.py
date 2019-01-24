@@ -76,7 +76,7 @@ class Player(Character):
 		
 	def jump(self):
 		self.y_momentum = 3
-		self.jumpTick = 200
+		self.jumpTick = 140
 	
 	def checkJump(self):
 		return self.jumpTick
