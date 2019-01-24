@@ -1,6 +1,7 @@
 # character module
 import pygame
 from pathlib import Path
+import animation
 
 # general character class
 class Character(pygame.sprite.Sprite):
@@ -59,17 +60,18 @@ class Character(pygame.sprite.Sprite):
 	
 	def faceRight(self):
 		self.facing = "right"
-		self.image = self.rightimg
 	
 	def faceLeft(self):
 		self.facing = "left"
-		self.image = self.leftimg
 
 # player character class
 class Player(Character):
 	def __init__(self, floor):
 		Character.__init__(self, 64, floor, 100, 64, "player", "right")
 		self.jumpTick = -1
+		
+		# Initialize the jump animation and load all images
+		self.jumpAnimation = animation.Jump("player")
 	
 	def run(self, momentum):
 		self.x_momentum = momentum
@@ -87,8 +89,25 @@ class Player(Character):
 	def stopJump(self):
 		self.jumpTick = -1
 	
-	def animate(self):
-		pass
+	def face(self):
+		if (self.facing == "right"):
+			if (self.jumpTick >= 11):
+				self.image = self.jumpAnimation.right1
+			elif (self.jumpTick >= 1):
+				self.image = self.jumpAnimation.right2
+			elif (self.jumpTick == 0):
+				self.image = self.jumpAnimation.right3
+			else:
+				self.image = self.rightimg
+		if (self.facing == "left"):
+			if (self.jumpTick >= 11):
+				self.image = self.jumpAnimation.left1
+			elif (self.jumpTick >= 1):
+				self.image = self.jumpAnimation.left2
+			elif (self.jumpTick == 0):
+				self.image = self.jumpAnimation.left3
+			else:
+				self.image = self.leftimg
 	
 	def update(self, width, height, floor):
 		if (self.x_momentum == 1):

@@ -58,6 +58,7 @@ class App:
 	def on_render(self):
 		# draw all characters on the screen
 		self.characters.clear(self.screen, self.currentLevel.getBackground())
+		self.playerChar.face()
 		self.characters.draw(self.screen)
 		# update the display
 		pygame.display.update()
