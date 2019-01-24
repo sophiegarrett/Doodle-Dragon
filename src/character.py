@@ -5,20 +5,22 @@ from pathlib import Path
 # general character class
 class Character(pygame.sprite.Sprite):
 	# Initializer
-	def __init__(self, xpos, ypos, width, height, imagepath):
+	def __init__(self, xpos, ypos, width, height, cat):
 		# Call the Sprite constructor
 		pygame.sprite.Sprite.__init__(self)
 		
 		# Create an image of the character
+		self.category = cat
+		self.imagepath = Path("assets/character/" + cat + "/right.png")
 		self.image = pygame.Surface([width, height])
-		self.image = pygame.image.load(imagepath.resolve().as_posix())
+		self.image = pygame.image.load(self.imagepath.resolve().as_posix())
 		
 		# Fetch the rectangle object that has the dimensions of the image
 		# Update the position of this object by setting the values of rect.x and rect.y
 		self.rect = self.image.get_rect()
 		
 		self.rect.x = xpos
-		self.rect.y = ypos
+		self.rect.y = ypos - height
 		self.x_momentum = 0
 		self.y_momentum = 0
 	
@@ -48,12 +50,17 @@ class Character(pygame.sprite.Sprite):
 	
 	def setYMomentum(self, x):
 		self.y_momentum = x
+	
+	def faceRight(self):
+		pass
+	
+	def faceLeft(self):
+		pass
 
 # player character class
 class Player(Character):
 	def __init__(self, floor):
-		self.imagepath = Path("assets/character/character.gif")
-		Character.__init__(self, 64, floor, 32, 32, self.imagepath)
+		Character.__init__(self, 64, floor, 100, 64, "player")
 		self.jumpTick = -1
 	
 	def run(self, momentum):
@@ -74,7 +81,7 @@ class Player(Character):
 	
 	def update(self, width, height, floor):
 		if (self.x_momentum == 1):
-			if (self.rect.x < width-32):
+			if (self.rect.x < width-self.rect.width):
 				self.moveX(1)
 		elif (self.x_momentum == -1):
 			if (self.rect.x > 0):
@@ -84,7 +91,7 @@ class Player(Character):
 			if (self.rect.y > 0):
 				self.moveY(-1)
 		elif (self.y_momentum <= -1):
-			if (self.rect.y < floor):
+			if (self.rect.y < floor - self.rect.height):
 				self.moveY(1)
 		
 		if (self.jumpTick >= 11):
@@ -95,6 +102,6 @@ class Player(Character):
 		elif (self.jumpTick == 0):
 			self.setYMomentum(-1)
 		
-		if (self.jumpTick == 0 and self.rect.y == floor):
+		if (self.jumpTick == 0 and self.rect.y == floor - self.rect.height):
 			self.stopJump()
 	

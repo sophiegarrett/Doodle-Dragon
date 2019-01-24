@@ -10,7 +10,7 @@ class App:
 		self.running = True
 		self.screen = None
 		self.size = self.width, self.height = 1024, 576
-		self.floor = 416
+		self.floor = 448
 	
 	def on_init(self):
 		# initialize pygame
